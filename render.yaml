@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: cueue-server-staging
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    repo: https://github.com/kazakago/cueue_server
+    branch: main
+    region: singapore
+    plan: starter
+    numInstances: 1
+    envVars:
+      - fromGroup: cueue-staging
+    domains:
+      - api-cueue-staging.kazakago.com
+
+  - type: web
+    name: cueue-server
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    repo: https://github.com/kazakago/cueue_server
+    branch: production
+    region: singapore
+    plan: starter
+    numInstances: 1
+    envVars:
+      - fromGroup: cueue
+    domains:
+      - api-cueue.kazakago.com
+
+  - type: cron
+    name: cueue-worker-staging
+    runtime: docker
+    dockerfilePath: ./worker/Dockerfile
+    repo: https://github.com/kazakago/cueue_server
+    branch: main
+    region: singapore
+    plan: starter
+    schedule: "0 18 * * *"
+
+  - type: cron
+    name: cueue-worker
+    runtime: docker
+    dockerfilePath: ./worker/Dockerfile
+    repo: https://github.com/kazakago/cueue_server
+    branch: production
+    region: singapore
+    plan: starter
+    schedule: "0 18 * * *"
+
+databases:
+  - name: cueue-database-staging
+    plan: starter
+    postgresMajorVersion: 16
+
+  - name: cueue-database
+    plan: starter
+    postgresMajorVersion: 16
+    ipAllowList: []
